@@ -27,10 +27,12 @@ XAC_THUC/
 │   ├── app/
 │   │   ├── home/page.tsx
 │   │   ├── login/page.tsx
-│   │   ├── register/page.tsx
+│   │   ├── register/page.tsx   # đăng kí gương mặt
 │   │   └── face-login/page.tsx
 │   ├── package.json
+|   ├── page.tsx            # trang đăng kí
 │   └── next.config.js
+|   
 │
 ├── face-ml/                # FastAPI ML service
 │   ├── reg_model.py        # Main ML API (extract, verify)
