@@ -21,7 +21,7 @@ export default function LoginPage() {
             localStorage.setItem("token", accessToken);
             setMsg(`Đăng nhập thành công`);
             if (res.data.step === "face_register_required") {
-              router.push(`/register`);
+              router.push(`/face-register`);
             } else if(res.data.step === "face_verify_required") {
               router.push(`/face-login`);
             } else {
