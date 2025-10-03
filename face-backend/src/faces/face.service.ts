@@ -7,11 +7,12 @@ import { PRIVATE_UPLOADS } from "src/multer.config";
 import axios, { create } from "axios";
 import { Jimp } from "jimp";
 import FormData = require("form-data");
+import { ConfigService } from "@nestjs/config";
 import * as path from "path";
 
 @Injectable()
 export class FaceService {
-  constructor(@InjectModel(Face.name) private faceModel: Model<FaceDocument>) {}
+  constructor(@InjectModel(Face.name) private faceModel: Model<FaceDocument>, private configService: ConfigService) {}
 
   async  isBlackImage(filePath:string): Promise<boolean> {
     const image = await Jimp.read(filePath);
@@ -52,8 +53,9 @@ export class FaceService {
         formData.append("files", buf, { filename: `frame_${i}.jpg` });
       });
 
+      const aiUrl = this.configService.get<string>("AI_SERVICE_URL");
       const res = await axios.post<any>(
-        "http://localhost:9100/extract_batch",
+        `${aiUrl}/extract_batch`,
         formData,
         { headers: formData.getHeaders() }
       );

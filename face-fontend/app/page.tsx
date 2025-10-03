@@ -12,7 +12,7 @@ export default function RegisterPage() {
 
   const handleSubmit = async () => {
     try {
-      const res = await axios.post("/api/users/register", {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/users/register`, {
         fullName,
         email,
         password,

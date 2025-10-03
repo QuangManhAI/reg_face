@@ -9,6 +9,7 @@ import * as path from "path";
 import { UseGuards } from "@nestjs/common";
 import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
 import { Request } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 
 
 interface BestFrameRespone {
@@ -21,7 +22,7 @@ interface BestFrameRespone {
 
 @Controller('faces')
 export class FaceController {
-    constructor(private readonly faceService: FaceService) {}
+    constructor(private readonly faceService: FaceService, private configService: ConfigService) {}
 
     @UseGuards(JwtAuthGuard)
     @Post('register')
@@ -43,9 +44,10 @@ export class FaceController {
         let bestIdx = -1;
         let confidence: number | undefined;
 
+        const aiUrl = this.configService.get<string>("AI_SERVICE_URL");
         try {
             const res =  await axios.post<BestFrameRespone>(
-                "http://localhost:9100/select_best_frame",
+                `${aiUrl}/extract_batch`,
                 formData, 
                 {headers: formData.getHeaders()}
             );

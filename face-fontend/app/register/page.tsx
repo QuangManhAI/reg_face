@@ -81,7 +81,7 @@ export default function RegisterFacePage() {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.post("/api/faces/register", formData, {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/faces/register`, formData, {
         headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
       });
       router.push(`/face-login`);

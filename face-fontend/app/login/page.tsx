@@ -11,7 +11,7 @@ export default function LoginPage() {
 
     const handleLogin =  async () => {
         try {
-            const res = await axios.post("/api/users/login", {
+            const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/users/login`, {
                 email, password,
             }, {
                 headers: {"Content-Type": "application/json"},

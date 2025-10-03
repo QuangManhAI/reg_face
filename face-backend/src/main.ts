@@ -5,12 +5,15 @@ import { join } from "path";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { json, urlencoded } from "express";
 import { PRIVATE_UPLOADS } from "./multer.config";
+import { ConfigService } from "@nestjs/config";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+  const configService = app.get(ConfigService);
+
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: configService.get<string>("CORS_ORIGIN"),
     credentials: true,
   });
 
@@ -18,12 +21,9 @@ async function bootstrap() {
   app.use(urlencoded({limit: "50mb", extended: true}));
 
   app.useGlobalPipes(new ValidationPipe());
-  app.useStaticAssets(join(__dirname, "..", "uploads"), {
-    prefix: "/uploads/",
-  });
-  
-  await app.listen(3001);
+
+  const port = configService.get<number>("PORT")
+  await app.listen(<any>port);
   console.log("Backend is running");
-  console.log(PRIVATE_UPLOADS);
 }
 bootstrap(); 

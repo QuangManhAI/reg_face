@@ -61,7 +61,7 @@ export default function FaceLoginPage() {
 
         try {
             const token = localStorage.getItem("token");
-            const res = await axios.post("/api/faces/verify-login", {
+            const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/faces/verify-login`, {
                 frames,
             }, {
                 headers: {"Content-Type": "application/json", Authorization: `Bearer ${token}`,}
