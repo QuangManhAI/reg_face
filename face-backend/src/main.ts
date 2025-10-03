@@ -4,6 +4,7 @@ import { ValidationPipe } from "@nestjs/common";
 import { join } from "path";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { json, urlencoded } from "express";
+import { PRIVATE_UPLOADS } from "./multer.config";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -23,5 +24,6 @@ async function bootstrap() {
   
   await app.listen(3001);
   console.log("Backend is running");
+  console.log(PRIVATE_UPLOADS);
 }
 bootstrap(); 

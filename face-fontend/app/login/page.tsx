@@ -11,18 +11,26 @@ export default function LoginPage() {
 
     const handleLogin =  async () => {
         try {
-            const res = await axios.post("http://localhost:3001/users/login", {
+            const res = await axios.post("/api/users/login", {
                 email, password,
             }, {
                 headers: {"Content-Type": "application/json"},
             });
-            if (res.data.step === "face_required") {
-              setMsg(`Successfil to login`);
-              router.push(`/face-login?user_id=${res.data.userId}`);
+            
+            const {accessToken} = res.data;
+            localStorage.setItem("token", accessToken);
+            setMsg(`Đăng nhập thành công`);
+            if (res.data.step === "face_register_required") {
+              router.push(`/register`);
+            } else if(res.data.step === "face_verify_required") {
+              router.push(`/face-login`);
+            } else {
+              router.push(`/face-login`);
             }
         } catch (err: any) {
+          const errMsg = err.response?.data?.message;
             console.error(err);
-            setMsg("Failed to login");
+            setMsg(errMsg);
         }
     };
 return (
@@ -41,7 +49,7 @@ return (
     {/* Email */}
     <div className="flex items-center mb-4 p-4 w-full rounded-xl bg-white 
                     border border-gray-300 focus-within:ring-2 focus-within:ring-orange-400">
-      <span className="mr-3 text-orange-500">✉️</span>
+      <span className="mr-3 text-orange-500"></span>
       <input
         type="email"
         placeholder="Email"
@@ -54,7 +62,7 @@ return (
     {/* Password */}
     <div className="flex items-center mb-6 p-4 w-full rounded-xl bg-white 
                     border border-gray-300 focus-within:ring-2 focus-within:ring-orange-400">
-      <span className="mr-3 text-orange-500">🔒</span>
+      <span className="mr-3 text-orange-500"></span>
       <input
         type="password"
         placeholder="Mật khẩu"
@@ -72,7 +80,7 @@ return (
                  hover:scale-105 transition-transform 
                  shadow-[0_4px_20px_rgba(251,191,36,0.8)]"
     >
-      🚀 Đăng nhập
+      Đăng nhập
     </button>
 
     {/* Message */}
@@ -81,7 +89,7 @@ return (
     {/* Footer */}
     <p className="mt-4 text-gray-700 text-sm">
       Chưa có tài khoản?{" "}
-      <a href="/register" className="text-orange-600 font-semibold hover:underline">
+      <a href="/" className="text-orange-600 font-semibold hover:underline">
         Đăng ký
       </a>
     </p>

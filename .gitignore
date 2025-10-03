@@ -21,3 +21,13 @@ _lib/
 uploads/
 
 git-filter-repo
+
+*.jpg
+*.pth
+optim
+torch
+
+test/
+public/
+os
+datasets/

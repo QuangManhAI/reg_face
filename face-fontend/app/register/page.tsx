@@ -3,24 +3,16 @@ import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import * as faceapi from "face-api.js";
 
 export default function RegisterFacePage() {
   const refVideo = useRef<HTMLVideoElement | null>(null);
   const refCanvas = useRef<HTMLCanvasElement | null>(null);
 
-  const searchParams = useSearchParams();
-  const [userId, setUserId] = useState<string | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
   const [message, setMessage] = useState("");
   const router = useRouter();
 
-  // Lấy userId từ URL
-  useEffect(() => {
-    const id = searchParams.get("user_id");
-    if (id) setUserId(id);
-  }, [searchParams]);
-
-  // Mở webcam
   useEffect(() => {
     navigator.mediaDevices
       .getUserMedia({ video: true })
@@ -32,23 +24,43 @@ export default function RegisterFacePage() {
       .catch((err) => console.error("Webcam error:", err));
   }, []);
 
+  useEffect(() => {
+    const loadModels = async () => {
+      await faceapi.nets.tinyFaceDetector.loadFromUri("/models/tiny_face_detector");
+      await faceapi.nets.faceLandmark68Net.loadFromUri("/models/face_landmark_68");
+    };
+    loadModels();
+  }, []);
+
   const handleRegister = async () => {
-    if (!userId) {
-      setMessage("❌ Không tìm thấy userId. Hãy đăng ký tài khoản trước.");
-      return;
-    }
     if (!refVideo.current || !refCanvas.current) return;
 
     setIsCapturing(true);
-    setMessage("📸 Đang chụp 10 khung hình...");
+    setMessage("Đang chụp 5 khung hình...");
 
     const collectionFrames: Blob[] = [];
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 5; i++) {
       const ctx = refCanvas.current.getContext("2d");
       if (!ctx) continue;
-      ctx.drawImage(refVideo.current, 0, 0, 320, 240);
 
+      const vw = refVideo.current.videoWidth;
+      const vh = refVideo.current.videoHeight;
+
+      refCanvas.current.width = vw;
+      refCanvas.current.height = vh;
+      ctx.drawImage(refVideo.current, 0, 0, vw, vh);
+
+      const detections = await faceapi.detectSingleFace(refCanvas.current, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks();
+
+      if (detections) {
+          const dims = { width: refCanvas.current.width, height: refCanvas.current.height };
+          const resized = faceapi.resizeResults(detections, dims);
+          new faceapi.draw.DrawFaceLandmarks(resized.landmarks).draw(refCanvas.current!);
+      } else {
+        setMessage("Không phát hiện gương mặt, hãy đưa mặt vào khung!");
+        break;
+      }
       const blob: Blob | null = await new Promise((resolve) =>
         refCanvas.current?.toBlob(resolve, "image/jpeg")
       );
@@ -56,21 +68,28 @@ export default function RegisterFacePage() {
       await new Promise((res) => setTimeout(res, 500));
     }
 
+    if (collectionFrames.length < 5) {
+      setMessage("Không đủ ảnh hợp lệ (có khuôn mặt). Vui lòng thử lại!");
+      setIsCapturing(false);
+      return;
+    }
+
     const formData = new FormData();
-    formData.append("userId", userId);
     collectionFrames.forEach((frame, i) => {
       formData.append("files", frame, `frame_${i}.jpg`);
     });
 
     try {
-      const res = await axios.post("http://localhost:3001/faces/register", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+      const token = localStorage.getItem("token");
+      const res = await axios.post("/api/faces/register", formData, {
+        headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
       });
-      router.push(`/login?user_id=${res.data.id}`);
-      setMessage(`✅ Đăng ký gương mặt thành công cho userId: ${res.data.userId}`);
-    } catch (err) {
+      router.push(`/face-login`);
+      setMessage(`Đăng ký gương mặt thành công`);
+    } catch (err: any) {
       console.error(err);
-      setMessage("❌ Lỗi khi đăng ký gương mặt");
+      const errorMsg = err.response?.data?.message
+      setMessage(errorMsg);
     } finally {
       setIsCapturing(false);
     }
@@ -89,7 +108,7 @@ return (
       Đăng ký gương mặt
     </h2>
     <p className="mb-6 text-gray-600 text-sm">
-      ✨ Giữ khuôn mặt trong khung để hệ thống chụp 10 ảnh liên tiếp
+      Giữ khuôn mặt trong khung để hệ thống chụp 5 ảnh liên tiếp
     </p>
 
     {/* Camera */}
@@ -114,7 +133,7 @@ return (
           : "bg-gradient-to-r from-orange-400 via-yellow-400 to-orange-500 hover:scale-105 transition-transform shadow-[0_4px_20px_rgba(251,191,36,0.8)]"
         }`}
     >
-      {isCapturing ? "📸 Đang đăng ký..." : "🚀 Đăng ký gương mặt"}
+      {isCapturing ? "Đang đăng ký..." : "Đăng ký gương mặt"}
     </button>
 
     {/* Message */}

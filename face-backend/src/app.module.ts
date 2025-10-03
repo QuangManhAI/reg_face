@@ -7,6 +7,8 @@ import { Face, FaceSchema } from "./faces/face.schema";
 import { FaceService } from "./faces/face.service";
 import { FaceController } from "./faces/face.controller";
 import { ConfigModule, ConfigService } from "@nestjs/config";
+import { AuthModule } from "./auth/auth.module";
+import { FilesController } from "./files/files-uploads.controller";
 
 @Module({
     imports: [
@@ -20,8 +22,9 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
         }),
         MongooseModule.forFeature([{name: User.name, schema: UserSchema}]),
         MongooseModule.forFeature([{name: Face.name, schema: FaceSchema}]),
+        AuthModule,
     ],
-    controllers: [UserController, FaceController],
+    controllers: [UserController, FaceController, FilesController],
     providers: [UserService, FaceService],
 })
 export class AppModule {} 

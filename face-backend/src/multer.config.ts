@@ -1,14 +1,18 @@
-import {diskStorage} from "multer";
-import {v4 as uuid} from "uuid";
+import { diskStorage } from "multer";
+import { v4 as uuid } from "uuid";
+import * as path from "path";
 import { extname } from "path";
-import { MulterOptions } from "@nestjs/platform-express/multer/interfaces/multer-options.interface";
 
-export const multerConfig: MulterOptions = {
-    storage: diskStorage({
-        destination: "./uploads",
-        filename: (req, file, cb) => {
-            const uniqueName = `${uuid()}${extname(file.originalname)}`;
-            cb(null, uniqueName);
-        },
-    }),
+export const PRIVATE_UPLOADS = path.join(process.cwd(), "uploads");
+
+export const multerConfig = {
+  storage: diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, PRIVATE_UPLOADS);
+    },
+    filename: (req, file, cb) => {
+      const uniqueName = `${uuid()}${extname(file.originalname)}`;
+      cb(null, uniqueName);
+    },
+  }),
 };

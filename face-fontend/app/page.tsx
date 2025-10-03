@@ -12,16 +12,17 @@ export default function RegisterPage() {
 
   const handleSubmit = async () => {
     try {
-      const res = await axios.post("http://localhost:3001/users/register", {
+      const res = await axios.post("/api/users/register", {
         fullName,
         email,
         password,
       });
-      setMsg("Register successful");
-      router.push(`/register?user_id=${res.data.id}`);
-    } catch (err) {
+      setMsg("Đăng kí thành công");
+      router.push(`/login`);
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.message
       console.error(err);
-      setMsg("Failed Register");
+      setMsg(errorMsg);
     }
   };
 
@@ -37,13 +38,13 @@ export default function RegisterPage() {
           Đăng ký tài khoản
         </h2>
         <p className="mb-8 text-gray-600 text-sm">
-          Nhanh chóng & an toàn ✨
+          Nhanh chóng & an toàn 
         </p>
 
         {/* Input họ tên */}
         <div className="flex items-center mb-4 p-4 w-full rounded-xl bg-white 
                         border border-gray-300 focus-within:ring-2 focus-within:ring-orange-400">
-          <span className="mr-3 text-orange-500">👤</span>
+          <span className="mr-3 text-orange-500"></span>
           <input
             type="text"
             placeholder="Họ và tên"
@@ -56,7 +57,7 @@ export default function RegisterPage() {
         {/* Input email */}
         <div className="flex items-center mb-4 p-4 w-full rounded-xl bg-white 
                         border border-gray-300 focus-within:ring-2 focus-within:ring-orange-400">
-          <span className="mr-3 text-orange-500">✉️</span>
+          <span className="mr-3 text-orange-500"></span>
           <input
             type="email"
             placeholder="Email"
@@ -69,7 +70,7 @@ export default function RegisterPage() {
         {/* Input password */}
         <div className="flex items-center mb-6 p-4 w-full rounded-xl bg-white 
                         border border-gray-300 focus-within:ring-2 focus-within:ring-orange-400">
-          <span className="mr-3 text-orange-500">🔒</span>
+          <span className="mr-3 text-orange-500"></span>
           <input
             type="password"
             placeholder="Password"
@@ -87,7 +88,7 @@ export default function RegisterPage() {
                      hover:scale-105 transition-transform 
                      shadow-[0_4px_20px_rgba(251,191,36,0.8)]"
         >
-          🚀 Đăng ký
+          Đăng ký
         </button>
 
         {/* Message */}

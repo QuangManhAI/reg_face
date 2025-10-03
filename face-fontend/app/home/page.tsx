@@ -11,18 +11,18 @@ export default function HomePage() {
         
         {/* Tiêu đề */}
         <h1 className="text-5xl font-extrabold mb-4 text-gray-900">
-          🎉 Chào mừng!
+          Chào mừng!
         </h1>
 
         {/* Subtitle */}
         <p className="text-gray-700 text-lg mb-8">
           Đây là trang chính của dự án <span className="font-bold text-orange-500">Xác thực gương mặt</span>.  
-          Nhanh chóng, an toàn và dễ sử dụng ✨
+          Nhanh chóng, an toàn và dễ sử dụng 
         </p>
 
         {/* Thông tin về dự án */}
         <div className="text-left bg-white/80 rounded-xl shadow p-6 mb-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-3">📌 Về dự án</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-3">Về dự án</h2>
           <ul className="list-disc list-inside text-gray-700 leading-relaxed space-y-2">
             <li>Đăng ký bằng email, mật khẩu và gương mặt.</li>
             <li>Đăng nhập chỉ bằng gương mặt qua webcam.</li>
@@ -33,7 +33,7 @@ export default function HomePage() {
 
         {/* Footer */}
         <p className="text-gray-600 text-sm">
-          🚀 Dự án demo – dành cho thử nghiệm và học tập.
+          Dự án demo – dành cho thử nghiệm và học tập.
         </p>
       </div>
     </div>

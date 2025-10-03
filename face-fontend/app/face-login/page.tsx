@@ -1,14 +1,13 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { useRouter, useSearchParams } from "next/navigation";
-import Stream from "stream";
+import { useRouter } from "next/navigation";
+import * as faceapi from "face-api.js";
+
 
 export default function FaceLoginPage() {
     const refVideo = useRef<HTMLVideoElement | null> (null);
     const refCanvas = useRef<HTMLCanvasElement| null> (null);
-    const searchParams = useSearchParams();
-    const userId = searchParams.get("user_id");
     const [msg, setMsg] = useState("");
     const [loading, setLoading] = useState(false);
     const router = useRouter();
@@ -22,40 +21,62 @@ export default function FaceLoginPage() {
         });
     }, []);
 
+    const loadModels = async() => {
+      await faceapi.nets.tinyFaceDetector.loadFromUri("/models/tiny_face_detector");
+    };
+    loadModels();
+
     const handleFaceLogin = async() => {
         if (!refVideo.current || !refCanvas.current) return;
 
         setLoading(true);
-        setMsg("Collecting 10 frame");
+        setMsg("Collecting 5 frame");
 
         const frames: string[] = [];
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 5; i++) {
             const ctx = refCanvas.current.getContext("2d");
             if (!ctx) continue;
             ctx.drawImage(refVideo.current, 0, 0, 320, 240);
+
+            const detections = await faceapi.detectSingleFace(
+              refCanvas.current, 
+              new faceapi.TinyFaceDetectorOptions()
+            );
+            if (!detections) {
+              setMsg("Không phát hiện gương mặt, vui lòng thử lại!");
+              break;
+            }
+
             const dataUrl = refCanvas.current.toDataURL("image/jpeg");
             frames.push(dataUrl);
             await new Promise(res => setTimeout(res, 500));
         }
 
+        if (frames.length < 5) {
+            setMsg("Không đủ ảnh hợp lệ. Vui lòng thử lại!");
+            setLoading(false);
+            return;
+        }
+
         try {
-            const res = await axios.post("http://localhost:3001/faces/verify-login", {
-                userId,
+            const token = localStorage.getItem("token");
+            const res = await axios.post("/api/faces/verify-login", {
                 frames,
             }, {
-                headers: {"Content-Type": "application/json"}
+                headers: {"Content-Type": "application/json", Authorization: `Bearer ${token}`,}
             });
 
             if (res.data.success) {
-                setMsg("Go to Home");
+                setMsg("Xác thực thành công đang chuyển hướng");
                 router.push("/home");
             } else {
-                setMsg("Falied, try agian");
+                setMsg(res.data.msg);
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
-            setMsg("Error when verify");
+            const errorMsg = err.response?.data?.message
+            setMsg(errorMsg);
         } finally {
             setLoading(false);
         }
@@ -93,7 +114,7 @@ return (
 
     {/* Hint */}
     <p className="text-gray-600 text-sm mb-6">
-      ✨ Giữ khuôn mặt trong khung để xác thực
+      Giữ khuôn mặt trong khung để xác thực
     </p>
 
     {/* Button */}
@@ -107,7 +128,7 @@ return (
             : "bg-gradient-to-r from-orange-400 via-yellow-400 to-orange-500 hover:scale-105 transition-transform shadow-[0_4px_20px_rgba(251,191,36,0.8)]"
         }`}
     >
-      {loading ? "📸 Đang xác thực..." : "🚀 Xác thực"}
+      {loading ? "Đang xác thực..." : "Xác thực"}
     </button>
 
     {/* Message */}
