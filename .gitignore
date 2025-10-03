@@ -28,6 +28,5 @@ optim
 torch
 
 test/
-public/
 os
 datasets/
