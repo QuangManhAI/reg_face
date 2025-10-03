@@ -49,42 +49,56 @@ XAC_THUC/
 
 ```mermaid
 flowchart TD
-    subgraph FE["Frontend"]
+    subgraph FE["Frontend (Next.js)"]
         direction TB
         FE1[Register Page] --> FE2[Register Face Page]
         FE3[Login Page] --> FE4[Face Login Page]
         FE4 --> FE5[Home Page]
     end
 
-    subgraph BE["Backend"]
+    subgraph BE["Backend (NestJS + MongoDB)"]
         direction TB
-        BE1[/users/register/] --> DB[(MongoDB)]
-        BE2[/users/login/] --> DB
-        BE3[/faces/register/] --> DB
-        BE4[/faces/verify-login/] --> DB
+        BE1[/users/register/]
+        BE2[/users/login/]
+        BE3[/faces/register/]
+        BE4[/faces/verify-login/]
+        BE5[/files/:filename/]
+        AUTH[(Auth Module - JWT)]
+        DB[(MongoDB)]
     end
 
-    subgraph ML["ML Service"]
+    subgraph ML["ML Service (FastAPI + PyTorch)"]
         direction TB
         ML1[/select_best_frame/]
         ML2[/extract_batch/]
     end
 
     %% Register account
-    FE1 -->|POST /users/register| BE1
+    FE1 -->|POST /users/register| BE1 --> DB
 
     %% Register face
-    FE2 -->|POST /faces/register| BE3
+    FE2 -->|POST /faces/register| BE3 --> DB
     BE3 -->|HTTP call| ML1
     ML1 --> BE3
 
     %% Login
-    FE3 -->|POST /users/login| BE2
+    FE3 -->|POST /users/login| BE2 --> DB
+    BE2 --> AUTH
 
     %% Verify face
-    FE4 -->|POST /faces/verify-login| BE4
+    FE4 -->|POST /faces/verify-login| BE4 --> DB
     BE4 -->|HTTP call| ML2
     ML2 --> BE4
+
+    %% Files
+    FE2 -->|Upload ảnh| BE5
+    FE4 -->|Request refFile| BE5
+    BE5 --> PRIVATE[Private Uploads Dir]
+
+    %% Auth usage
+    AUTH -.-> BE3
+    AUTH -.-> BE4
+    AUTH -.-> BE5
 
     BE <--> DB
 ```
