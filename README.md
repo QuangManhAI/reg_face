@@ -49,26 +49,23 @@ XAC_THUC/
 
 ```mermaid
 flowchart TD
-    subgraph FE[" "]
-        direction TB
-        FE_LABEL{{Frontend (Next.js)}}:::label
+    subgraph FE["Frontend (Next.js)"]
+        fe_label["Frontend (Next.js)"]:::invisible
         FE1[Register Page] --> FE2[Register Face Page]
         FE3[Login Page] --> FE4[Face Login Page]
         FE4 --> FE5[Home Page]
     end
 
-    subgraph BE[" "]
-        direction TB
-        BE_LABEL{{Backend (NestJS + MongoDB)}}:::label
+    subgraph BE["Backend (NestJS + MongoDB)"]
+        be_label["Backend (NestJS + MongoDB)"]:::invisible
         BE1[/users/register/] --> DB[(MongoDB)]
         BE2[/users/login/] --> DB
         BE3[/faces/register/] --> DB
         BE4[/faces/verify-login/] --> DB
     end
 
-    subgraph ML[" "]
-        direction TB
-        ML_LABEL{{ML Service (FastAPI + PyTorch)}}:::label
+    subgraph ML["ML Service (FastAPI + PyTorch)"]
+        ml_label["ML Service (FastAPI + PyTorch)"]:::invisible
         ML1[/select_best_frame/]
         ML2[/extract_batch/]
     end
@@ -91,7 +88,7 @@ flowchart TD
 
     BE <--> DB
 
-    classDef label fill=none,stroke=none,font-weight=bold;
+    classDef invisible fill=none,stroke=none;
 ```
 
 ---
