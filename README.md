@@ -50,26 +50,38 @@ XAC_THUC/
 ```mermaid
 flowchart TD
     subgraph FE["Frontend (Next.js)"]
-        A1[Register Page] --> A2[Register Face Page]
-        A3[Login Page] --> A4[Face Login Page]
+        FE1[Register Page] --> FE2[Register Face Page]
+        FE3[Login Page] --> FE4[Face Login Page]
+        FE4 --> FE5[Home Page]
     end
 
     subgraph BE["Backend (NestJS + MongoDB)"]
-        B1[[/users/register]] --> DB[(MongoDB)]
-        B2[[/users/login]] --> DB
-        B3[[/faces/register]] --> DB
-        B4[[/faces/verify-login]] --> DB
+        BE1[/users/register/] --> DB[(MongoDB)]
+        BE2[/users/login/] --> DB
+        BE3[/faces/register/] --> DB
+        BE4[/faces/verify-login/] --> DB
     end
 
     subgraph ML["ML Service (FastAPI + PyTorch)"]
-        C1[[/select_best_frame]]
-        C2[[/extract_batch]]
+        ML1[/select_best_frame/]
+        ML2[/extract_batch/]
     end
 
-    A1 -->|POST /users/register| B1
-    A2 -->|POST /faces/register| B3 -->|HTTP call| C1
-    A3 -->|POST /users/login| B2
-    A4 -->|POST /faces/verify-login| B4 -->|HTTP call| C2
+    %% Register account
+    FE1 -->|POST /users/register| BE1
+
+    %% Register face
+    FE2 -->|POST /faces/register| BE3
+    BE3 -->|HTTP call| ML1
+    ML1 --> BE3
+
+    %% Login
+    FE3 -->|POST /users/login| BE2
+
+    %% Verify face
+    FE4 -->|POST /faces/verify-login| BE4
+    BE4 -->|HTTP call| ML2
+    ML2 --> BE4
 
     BE <--> DB
 ```
