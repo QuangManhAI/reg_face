@@ -1,4 +1,4 @@
-# Báo cáo cho nhiệm vụ: Đăng kí và đăng nhập có xác thực gương mặt với NestJS - TypeScript và Model Facenet - Python.
+# Báo cáo cho nhiệm vụ: Đăng kí và đăng nhập có xác thực gương mặt với NestJS - TypeScript và FastAPI Model Facenet - Python.
 ## 1. Tổng quan
 - Nhiệm vụ này thực hiện nhằm xây dựng một hệ thống xác nhận người dùng bằng gương mặt đơn giản gồm 3 thành phần chính:
     - **Backend:** Cung cấp API để quản lý user (đăng nhập và đăng kí bằng email, mật khẩu), xác thực bằng JWT, xử lý dữ liệu khuôn mặt và upload ảnh, lưu trữ để phục vụ đăng nhập có xác thực gương mặt. BE viết bằng NestJS + database MongoDB.
@@ -403,5 +403,5 @@
 
     ![Sysyem Diagram](./log.png)
   - Model: 
-  
+
     ![Sysyem Diagram](./log1.png)
