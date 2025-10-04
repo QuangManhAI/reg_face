@@ -354,7 +354,7 @@
 
 ## 6. Sơ đồ trực quan.
 
-![System Diagram](./YeuNgocDiep.png)
+![System Diagram](./sodo.png)
 
 ## 7. Sử dụng trực tiếp.
 

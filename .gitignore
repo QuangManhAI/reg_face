@@ -22,7 +22,7 @@ uploads/
 
 git-filter-repo
 
-*.jpg
+
 *.pth
 optim
 torch
