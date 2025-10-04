@@ -47,7 +47,7 @@ export class FaceController {
         const aiUrl = this.configService.get<string>("AI_SERVICE_URL");
         try {
             const res =  await axios.post<BestFrameRespone>(
-                `${aiUrl}/extract_batch`,
+                `${aiUrl}/select_best_frame`,
                 formData, 
                 {headers: formData.getHeaders()}
             );
