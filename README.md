@@ -263,6 +263,7 @@
 - Mở camera, chụp 5 ảnh liên tiếp bằng **face-api.js**,không hiển thị landmarks nhưng lưu vẫn có để sử dụng.
 - Gửi ảnh qua API `/faces/register` dưới dạng `FormData` kèm JWT token.
 - Sau khi đăng ký thành công, frontend chuyển hướng sang `face-login` để xác thực.
+- Sử dụng AI  tích hợp FE theo mô tả công việc để lấy landmark. 
 
 3.3 `login/`
 - Trang đăng nhập cơ bản bằng email + mật khẩu.
