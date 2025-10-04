@@ -337,7 +337,7 @@
 - Model hoạt động ổn định, có thể phát hiện và nhận diện gương mặt trên ảnh webcam.  
 - Đưa ra kết quả với similarity (cosine) và confidence (0–1) rõ ràng.  
 - Đảm bảo tốc độ xử lý hợp lý nhờ MTCNN (phát hiện nhanh) và InceptionResnetV1 (nhận diện chính xác).  
-
+- Nhược điểm: chưa có liveness. khi bị Fake bởi ảnh tĩnh và streaming vẫn bị lọt qua.
 ## 5. Bài học và hướng phát triển.
 
 5.1 Bài học rút ra
@@ -348,7 +348,7 @@
 
 5.2 Hướng phát triển
 - **Cải thiện model**:  
-  - Dùng các model nhẹ hơn (MobileFaceNet, ArcFace) để tăng tốc độ.   
+  - Dùng các model nhẹ hơn (MobileFaceNet, ArcFace) để tăng tốc độ. Cai thiện liveness tránh fake để xác thực. Liveness và anti proofing là vô cùng quan trọng.
 - **Nâng cao trải nghiệm người dùng**:  
   - Thêm feedback trực quan khi FE chưa phát hiện được khuôn mặt (ví dụ: khung viền màu đỏ/xanh).  
   - Cho phép chụp nhiều lần nếu chất lượng ảnh kém.
